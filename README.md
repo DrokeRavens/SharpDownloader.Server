@@ -7,8 +7,8 @@ This API is capable of downloading files by a given direct link, eg: http://fisi
  - .NET5
  - ASPNET.CORE
 
-# Compile
-## How to compile this project
+# Compile & run
+## How to compile & run this project
 
 - Clone this project
 - Ensure that you have .NET5 SDK in your machine.
