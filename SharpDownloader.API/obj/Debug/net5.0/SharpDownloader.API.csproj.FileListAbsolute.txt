@@ -27,3 +27,10 @@ D:\Projects\SharpDownloader\backend\SharpDownloader.API\obj\Debug\net5.0\SharpDo
 D:\Projects\SharpDownloader\backend\SharpDownloader.API\obj\Debug\net5.0\ref\SharpDownloader.API.dll
 D:\Projects\SharpDownloader\backend\SharpDownloader.API\obj\Debug\net5.0\SharpDownloader.API.pdb
 D:\Projects\SharpDownloader\backend\SharpDownloader.API\obj\Debug\net5.0\SharpDownloader.API.genruntimeconfig.cache
+D:\Projects\SharpDownloader\backend\SharpDownloader.API\bin\Debug\net5.0\Newtonsoft.Json.dll
+D:\Projects\SharpDownloader\backend\SharpDownloader.API\bin\Debug\net5.0\SharpDownloader.Downloader.dll
+D:\Projects\SharpDownloader\backend\SharpDownloader.API\bin\Debug\net5.0\SharpDownloader.Downloader.pdb
+D:\Projects\SharpDownloader\backend\SharpDownloader.API\bin\Debug\net5.0\SharpDownloader.Wss.dll
+D:\Projects\SharpDownloader\backend\SharpDownloader.API\bin\Debug\net5.0\SharpDownloader.Wss.pdb
+D:\Projects\SharpDownloader\backend\SharpDownloader.API\bin\Debug\net5.0\SharpDownloader.Integration.dll
+D:\Projects\SharpDownloader\backend\SharpDownloader.API\bin\Debug\net5.0\SharpDownloader.Integration.pdb

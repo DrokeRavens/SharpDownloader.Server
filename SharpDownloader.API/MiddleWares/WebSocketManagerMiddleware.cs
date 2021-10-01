@@ -1,19 +1,20 @@
 using System;
 using System.Net.WebSockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using SharpDownloader.API.Wss;
+using SharpDownloader.Wss;
 
 namespace SharpDownloader.API.MiddleWares
 {
     public class WebSocketManagerMiddleware
 {
     private readonly RequestDelegate _next;
-    private WsHandler _webSocketHandler { get; set; }
+    private ISocketHandler _webSocketHandler { get; set; }
 
     public WebSocketManagerMiddleware(RequestDelegate next,
-                                        WsHandler webSocketHandler)
+                                        ISocketHandler webSocketHandler)
     {
         _next = next;
         _webSocketHandler = webSocketHandler;
@@ -31,13 +32,14 @@ namespace SharpDownloader.API.MiddleWares
         {
             if(result.MessageType == WebSocketMessageType.Text)
             {
-                await _webSocketHandler.ReceiveAsync(socket, result, buffer);
+                string msg = Encoding.UTF8.GetString(buffer);
+                await _webSocketHandler.OnMessage(socket, msg);
                 return;
             }
 
             else if(result.MessageType == WebSocketMessageType.Close)
             {
-                await _webSocketHandler.OnDisconnected(socket);
+                await _webSocketHandler.OnDisconnect(socket);
                 return;
             }
 
