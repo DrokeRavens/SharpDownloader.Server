@@ -18,7 +18,6 @@ This API is capable of downloading files by a given direct link, eg: http://fisi
 # TODOS 
 * Create a database to store download info.
 * Refactor some code
-* Finish pause and resume
-* Refactor websocket connection
+* Check file for resume
 * Download service using webcrawler or api for popular websites, eg: google drive, mediafire, mega.nz...
 * To be defined...
