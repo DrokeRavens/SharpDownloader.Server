@@ -8,20 +8,19 @@ using SharpDownloader.Integration.Observer;
 
 namespace SharpDownloader.Downloader
 {
-    public class DownloadService : BackgroundService
+    public class DownloadService : BackgroundService, ISubject
     {
         private List<DownloadBlock> _downloads;
+        private List<IObserver> _observers;
         public DownloadService()
         {
             _downloads = new List<DownloadBlock>();
+            _observers = new List<IObserver>();
         }
 
         
 
-        public Task Cancel(string id)
-        {
-            throw new System.NotImplementedException();
-        }
+        
 
         public async Task <string> Create(string url, string path){
             var download = new DownloadBlock(this);
@@ -54,17 +53,24 @@ namespace SharpDownloader.Downloader
 
         public Task Pause(string id)
         {
-            throw new System.NotImplementedException();
+            var download = _downloads.SingleOrDefault(c => c.Id.Equals(id));
+            download.Pause();
+            return Task.CompletedTask;
         }
 
         public Task Resume(string id)
         {
-            throw new System.NotImplementedException();
+             var download = _downloads.SingleOrDefault(c => c.Id.Equals(id));
+            download.Resume();
+            return Task.CompletedTask;
         }
-
-        public void AttachBridge(IObserver observer){
-            foreach(var download in _downloads)
-                download.Attach(observer);
+        public Task Cancel(string id, bool deleteFile)
+        {
+            var download = _downloads.SingleOrDefault(c => c.Id.Equals(id));
+            download.Cancel(deleteFile);
+            _downloads.Remove(download);
+            
+            return Task.CompletedTask;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -77,11 +83,36 @@ namespace SharpDownloader.Downloader
                         new Thread(async () => 
                         {
                             Thread.CurrentThread.IsBackground = true; 
+                            await NotifyNewDownload(download);
                             await download.StartDownloading();
                         }).Start();
                     }
                 }
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(5000, stoppingToken);
+            }
+        }
+
+        public void Attach(IObserver observer)
+        {
+            _observers.Add(observer);
+        }
+
+        public void Detach(IObserver observer)
+        {
+            _observers.Remove(observer);
+        }
+
+        public async Task NotifyProgress(string id, double progress, string size, string remainingTime)
+        {
+            foreach(var observer in _observers){
+                await observer.UpdateProgress(id, progress, size, remainingTime);
+            }
+        }
+
+        public async Task NotifyNewDownload(object downloadBlock)
+        {
+            foreach(var observer in _observers){
+                await observer.UpdateNewDownload(downloadBlock);
             }
         }
     }

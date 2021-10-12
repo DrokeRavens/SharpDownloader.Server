@@ -52,10 +52,10 @@ namespace SharpDownloader.Wss
 
             switch (message.PacketType)
             {
-                case RcvCommands.DownloadList:
+                case Command.DownloadList:
                     await SendDownloadList(sender);
                     break;
-                case RcvCommands.DownloadProgress:
+                case Command.DownloadProgress:
                     SubscribeDownloads(sender);
                     break;
                 default:
@@ -66,40 +66,40 @@ namespace SharpDownloader.Wss
 
         private void SubscribeDownloads(WssClient sender)
         {
-            _downloadService.AttachBridge(sender);
+            _downloadService.Attach(sender);
         }
 
         private async Task SendDownloadList(WssClient sender)
         {
             var allDownloads = _downloadService.GetAll(sender.Id);
 
-            await SendMessage(sender.Id, allDownloads, SndCommands.DownloadList);
-        }
-
-        public async Task SendMessage(string id, object message, SndCommands type){
             var payload = new SndPayload {
-                PacketType = type,
-                PacketData = message
+                PacketType = Command.DownloadList,
+                PacketData = allDownloads
             };
-            var client = _clients.SingleOrDefault(c => c.Id.Equals(id));
 
-            var messageJson = JsonConvert.SerializeObject(payload);
-            await client.Socket.SendAsync(buffer: new ArraySegment<byte>(array: Encoding.ASCII.GetBytes(messageJson),
+            await SendMessage(sender.Id, payload);
+        }
+        public async Task SendMessage(WebSocket socket, object message){
+            var messageJson = JsonConvert.SerializeObject(message);
+            await socket.SendAsync(buffer: new ArraySegment<byte>(array: Encoding.ASCII.GetBytes(messageJson),
                                                                     offset: 0,
                                                                     count: messageJson.Length),
                                     messageType: WebSocketMessageType.Text,
                                     endOfMessage: true,
                                     cancellationToken: CancellationToken.None);
         }
+        public async Task SendMessage(string id, object message){
 
-        public Task SendMessage(string id, object message, SndPayload type)
-        {
-            throw new NotImplementedException();
-        }
+            var client = _clients.SingleOrDefault(c => c.Id.Equals(id));
 
-        public void Update(ISubject subject)
-        {
-            throw new NotImplementedException();
+            var messageJson = JsonConvert.SerializeObject(message);
+            await client.Socket.SendAsync(buffer: new ArraySegment<byte>(array: Encoding.ASCII.GetBytes(messageJson),
+                                                                    offset: 0,
+                                                                    count: messageJson.Length),
+                                    messageType: WebSocketMessageType.Text,
+                                    endOfMessage: true,
+                                    cancellationToken: CancellationToken.None);
         }
     }
 }

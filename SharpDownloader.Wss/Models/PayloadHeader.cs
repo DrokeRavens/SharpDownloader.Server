@@ -4,9 +4,8 @@ using SharpDownloader.Wss.Enum;
 
 namespace SharpDownloader.Wss.Models.Snd
 {
-    public class RcvPayload : PayloadHeader
+    public class PayloadHeader
     {
-        public object PacketData {get;set;}
-        public string Id {get;set;}
+        public Command PacketType {get;set;}
     }
 }

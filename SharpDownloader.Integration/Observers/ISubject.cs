@@ -7,6 +7,6 @@ namespace SharpDownloader.Integration.Observer
 
         void Detach(IObserver observer);
 
-        Task Notify();
+        Task NotifyProgress(string id, double progress, string size, string remainingTime);
     }
 }

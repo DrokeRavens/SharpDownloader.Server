@@ -26,7 +26,7 @@ namespace SharpDownloader.Wss
 
             await SendMessage(socket, new {
                 Id = client.Id
-            }, SndCommands.Identity);
+            }, Command.Identity);
         }
 
         public Task OnDisconnect(WebSocket socket)
@@ -38,15 +38,19 @@ namespace SharpDownloader.Wss
 
         public Task OnMessage(WebSocket socket, string message)
         {
-            Console.WriteLine("Message: " + message);
-            var messageObject = JsonConvert.DeserializeObject<RcvPayload>(message);
-
-            _socketManager.ProcessMessage(messageObject);
+            try{
+                var messageObject = JsonConvert.DeserializeObject<RcvPayload>(message);
+                _socketManager.ProcessMessage(messageObject);
+            }
+            catch(Exception ex){
+                Console.WriteLine("Error processing message : " + ex.Message);
+            }
+            
             
             return Task.CompletedTask;
         }
 
-        public async Task SendMessage(WebSocket socket, object message, SndCommands type){
+        public async Task SendMessage(WebSocket socket, object message, Command type){
             var payload = new SndPayload {
                 PacketType = type,
                 PacketData = message
