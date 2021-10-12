@@ -6,6 +6,7 @@ namespace SharpDownloader.Downloader
         Paused = 1,
         Error = 2,
         Finished = 3,
-        Sleeping = 4
+        Sleeping = 4,
+        Cancel = 5
     }
 }

@@ -11,7 +11,7 @@ namespace SharpDownloader.Wss
         WssClient Add(WebSocket socket);
         Task Remove(WebSocket socket);
         Task Disconnect(string id);
-        Task SendMessage(string id, object message, SndPayload type);
+        Task SendMessage(string id, object message);
         Task ProcessMessage(RcvPayload message);
     }
 }

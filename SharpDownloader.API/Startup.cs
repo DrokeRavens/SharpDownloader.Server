@@ -30,6 +30,7 @@ namespace SharpDownloader.API
             });
             
             services.AddWebSocketManager();
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,18 +50,18 @@ namespace SharpDownloader.API
 
             var serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
             var serviceProvider = serviceScopeFactory.CreateScope().ServiceProvider;
-
+            app.UseCors(x => x
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(origin => true) // allow any origin
+                    //.WithOrigins("https://localhost:44351")); // Allow only this origin can also have multiple origins separated with comma
+                    .AllowCredentials()); // allow credentials
             app.UseWebSockets(webSocketOptions);
             app.MapWebSocketManager("/ws", serviceProvider.GetService<ISocketHandler>());
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseCors(x => x
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .SetIsOriginAllowed(origin => true) // allow any origin
-                .AllowCredentials());
 
             app.UseAuthorization();
 

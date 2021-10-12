@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using System.Threading.Tasks;
 using SharpDownloader.Integration.Observer;
 using SharpDownloader.Wss.Enum;
+using SharpDownloader.Wss.Models.Snd;
 
 namespace SharpDownloader.Wss.Models
 {
@@ -16,9 +17,32 @@ namespace SharpDownloader.Wss.Models
         {
             _manager = manager;
         }
-        public async Task Update(ISubject subject)
+        public async Task UpdateProgress(string id, double progress, string size, string remainingTime)
         {
-            await _manager.SendMessage(Id, subject, SndCommands.DownloadProgress);
+            if(Socket.State != WebSocketState.Open)
+                return; 
+            var downProgress = new SndDownloadProgress {
+                Id = id,
+                Progress = progress,
+                SizeProgress = size,
+                RemainingTime = remainingTime,
+                PacketType = Command.DownloadProgress
+            };
+            
+            await _manager.SendMessage(this.Socket, downProgress);
+        }
+
+        public async Task UpdateNewDownload(object downloadBlock)
+        {
+            if(Socket.State != WebSocketState.Open)
+                return; 
+
+            var downProgress = new SndPayload {
+                PacketType = Command.NewDownload,
+                PacketData = downloadBlock
+            };
+            
+            await _manager.SendMessage(this.Socket, downProgress);
         }
     }
 }
